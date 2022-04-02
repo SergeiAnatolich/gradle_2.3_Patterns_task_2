@@ -1,0 +1,1 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/usr0cbwp9cg26her?svg=true)](https://ci.appveyor.com/project/SergeiAnatolich/gradle-2-3-patterns-task-2)
