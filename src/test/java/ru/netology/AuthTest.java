@@ -5,11 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.netology.data.DataGenerator;
 
-import static com.codeborne.selenide.Condition.appear;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Selenide.$;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuthTest {
 
@@ -25,9 +24,7 @@ class AuthTest {
         $("[data-test-id=login] input").val(registeredUser.getLogin());
         $("[data-test-id=password] input").val(registeredUser.getPassword());
         $(withText("Продолжить")).click();
-        String actual = $(".heading").getText().trim();
-        String expected = "Личный кабинет";
-        assertEquals(expected, actual);
+        $(".heading").shouldHave(text("Личный кабинет"));
     }
 
     @Test
@@ -37,7 +34,9 @@ class AuthTest {
         $("[data-test-id=login] input").val(notRegisteredUser.getLogin());
         $("[data-test-id=password] input").val(notRegisteredUser.getPassword());
         $(withText("Продолжить")).click();
-        $("[data-test-id=error-notification] .notification__title").should(appear);
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(text("Ошибка!"))
+                .shouldHave(text("Неверно указан логин или пароль"));
     }
 
     @Test
@@ -47,7 +46,9 @@ class AuthTest {
         $("[data-test-id=login] input").val(blockedUser.getLogin());
         $("[data-test-id=password] input").val(blockedUser.getPassword());
         $(withText("Продолжить")).click();
-        $("[data-test-id=error-notification] .notification__title").should(appear);
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(text("Ошибка!"))
+                .shouldHave(text("Пользователь заблокирован"));
     }
 
     @Test
@@ -55,13 +56,12 @@ class AuthTest {
     void shouldGetErrorIfWrongLogin() {
         var registeredUser = DataGenerator.Registration.getRegisteredUser("active");
         var wrongLogin = DataGenerator.getRandomLogin();
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка входа в личный кабинет с неверным
-        //  логином, для заполнения поля формы "Логин" используйте переменную wrongLogin,
-        //  "Пароль" - пользователя registeredUser
         $("[data-test-id=login] input").val(wrongLogin);
         $("[data-test-id=password] input").val(registeredUser.getPassword());
         $(withText("Продолжить")).click();
-        $("[data-test-id=error-notification] .notification__title").should(appear);
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(text("Ошибка!"))
+                .shouldHave(text("Неверно указан логин или пароль"));
     }
 
     @Test
@@ -69,12 +69,11 @@ class AuthTest {
     void shouldGetErrorIfWrongPassword() {
         var registeredUser = DataGenerator.Registration.getRegisteredUser("active");
         var wrongPassword = DataGenerator.getRandomPassword();
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка входа в личный кабинет с неверным
-        //  паролем, для заполнения поля формы "Логин" используйте пользователя registeredUser,
-        //  "Пароль" - переменную wrongPassword
         $("[data-test-id=login] input").val(registeredUser.getLogin());
         $("[data-test-id=password] input").val(wrongPassword);
         $(withText("Продолжить")).click();
-        $("[data-test-id=error-notification] .notification__title").should(appear);
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(text("Ошибка!"))
+                .shouldHave(text("Неверно указан логин или пароль"));
     }
 }
